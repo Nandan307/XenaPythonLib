@@ -1,6 +1,6 @@
 import time
 import logging
-import XenaStream
+from . import XenaStream
 
 logger = logging.getLogger(__name__)
 
@@ -129,7 +129,7 @@ class XenaPort:
                 if len(tid_list):
                     storage['pr_tplds'] = tid_list
             elif parms[1] == 'PR_TPLDTRAFFIC':
-                if storage.has_key('pr_tpldstraffic'):
+                if 'pr_tpldstraffic' in storage:
                     data = storage['pr_tpldstraffic']
                 else:
                     data = {}
@@ -137,7 +137,7 @@ class XenaPort:
                 data[entry_id] = self.__pack_stats(parms, 3)
                 storage['pr_tpldstraffic'] = data
             elif parms[1] == 'PR_TPLDERRORS':
-                if storage.has_key('pr_tplderrors'):
+                if 'pr_tplderrors' in storage:
                     data = storage['pr_tplderrors']
                 else:
                     data = {}
@@ -145,7 +145,7 @@ class XenaPort:
                 data[entry_id] = self.__pack_tplderrors_stats(parms, 3)
                 storage['pr_tplderrors'] = data
             elif parms[1] == 'PR_TPLDLATENCY':
-                if storage.has_key('pr_tpldlatency'):
+                if 'pr_tpldlatency' in storage:
                     data = storage['pr_tpldlatency']
                 else:
                     data = {}
@@ -153,7 +153,7 @@ class XenaPort:
                 data[entry_id] = self.__pack_tpldlatency_stats(parms, 3)
                 storage['pr_tpldlatency'] = data
             elif parms[1] == 'PR_TPLDJITTER':
-                if storage.has_key('pr_tpldjitter'):
+                if 'pr_tpldjitter' in storage:
                     data = storage['pr_tpldjitter']
                 else:
                     data = {}
@@ -161,7 +161,7 @@ class XenaPort:
                 data[entry_id] = self.__pack_tpldjitter_stats(parms, 3)
                 storage['pr_pldjitter'] = data
             elif parms[1] == 'PR_FILTER':
-                if storage.has_key('pr_filter'):
+                if 'pr_filter' in storage:
                     data = storage['pr_filter']
                 else:
                     data = {}
@@ -457,7 +457,7 @@ class XenaPort:
         return stats
 
     def add_stream(self, sid):
-        if self.streams.has_key(sid):
+        if sid in self.streams:
             logger.error("Adding duplicated stream")
             return
 
@@ -469,13 +469,13 @@ class XenaPort:
         return
 
     def get_stream(self, sid):
-        if self.streams.has_key(sid):
+        if sid in self.streams:
             return self.streams[sid]
 
         return None
 
     def del_stream(self, sid):
-        if not self.streams.has_key(sid):
+        if sid not in self.streams:
             logger.error("Deleting unknown stream")
             return
 
