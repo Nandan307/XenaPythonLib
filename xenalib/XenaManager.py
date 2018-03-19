@@ -4,8 +4,8 @@ import time
 import logging
 import threading
 
-from . import KeepAliveThread
-from . import XenaPort
+import KeepAliveThread
+import XenaPort
 
 logger = logging.getLogger(__name__)
 
@@ -13,16 +13,10 @@ class XenaManager:
     def __init__(self, xsocket, owner, password = 'xena'):
         self.xsocket = xsocket
         self.ports = {}
-        self.keep_alive_thread = None
-        # FIXME: This is really weird.  The initialization can fail, which
-        # is bad practice.  But rather than do the refactor at the moment,
-        # we just set keep_alive_thread to None, and check for it in
-        # __del__
         if self.logon(password):
             logger.info("Logged successfully")
         else:
             logger.error("Failed to log in")
-            print("FATAL: Failed to log in")
             sys.exit(-1)
 
         self.set_owner(owner)
@@ -30,20 +24,18 @@ class XenaManager:
         self.keep_alive_thread.start()
 
     def __del__(self):
-        for pkey in list(self.ports.keys()):
+        for pkey in self.ports.keys():
             port_del = self.ports[pkey]
             port_del.reset()
             port_del.release()
             del port_del
 
         self.ports = {}
-        if self.keep_alive_thread:
-            self.keep_alive_thread.stop()
+        self.keep_alive_thread.stop()
         # FIXME: race
         time.sleep(1)
         self.xsocket.sendQueryVerify('c_logoff')
-        if self.keep_alive_thread:
-            del self.keep_alive_thread
+        del self.keep_alive_thread
 
     def _compose_str_command(self, cmd, argument):
         command = cmd + ' \"' + argument + '\"'
@@ -60,7 +52,7 @@ class XenaManager:
 
 
     def add_port(self, module, port):
-        if (module, port) in self.ports:
+        if self.ports.has_key((module, port)):
             logger.error("Adding duplicated port")
             return
 
@@ -74,12 +66,12 @@ class XenaManager:
         return port_new
 
     def get_port(self, module, port):
-        if (module, port) in self.ports:
+        if self.ports.has_key((module, port)):
             return self.ports[(module, port)]
         return None
 
     def remove_port(self, port):
-        if (module, port) not in self.ports:
+        if not self.ports.has_key((module, port)):
             logger.error("Deleting unknown port")
             return
 

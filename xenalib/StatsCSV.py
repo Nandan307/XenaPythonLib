@@ -3,7 +3,7 @@ import csv
 def _find_total_leaf_nodes(stats):
     leaf = 0
     if type(stats) is dict:
-        for k in list(stats.keys()):
+        for k in stats.keys():
             leaf += _find_total_leaf_nodes(stats[k])
     else:
         return 1
@@ -11,7 +11,7 @@ def _find_total_leaf_nodes(stats):
     return leaf
 
 def _find_total_nr_stats(stats):
-    first_sample_key = list(stats.keys())[0]
+    first_sample_key = stats.keys()[0]
     return _find_total_leaf_nodes(stats[first_sample_key])
 
 def _insert_centered_field(value, nr_leafs):
@@ -22,11 +22,11 @@ def _insert_centered_field(value, nr_leafs):
 def _build_unit_header_line(stats):
     header = ['timestamp']
     # first sample only
-    first_sample_key =  list(stats.keys())[0]
-    testnames = list(stats[first_sample_key].keys())
+    first_sample_key =  stats.keys()[0]
+    testnames = stats[first_sample_key].keys()
     for test in testnames:
         if type(stats[first_sample_key][test]) is dict:
-            testunits = list(stats[first_sample_key][test].keys())
+            testunits = stats[first_sample_key][test].keys()
             if len(testunits):
                 header += testunits
                 continue
@@ -36,14 +36,14 @@ def _build_unit_header_line(stats):
 
 def _build_values_lines(stats):
     values = []
-    sample_list = list(stats.keys())
+    sample_list = stats.keys()
     sample_list.sort()
     for sample in sample_list:
         sample_values = [ sample ]
-        testnames = list(stats[sample].keys())
+        testnames = stats[sample].keys()
         for test in testnames:
             if type(stats[sample][test]) is dict:
-                testunits = list(stats[sample][test].keys())
+                testunits = stats[sample][test].keys()
                 for unit in testunits:
                     sample_values.append(stats[sample][test][unit])
                 continue
@@ -54,8 +54,8 @@ def _build_values_lines(stats):
 def _build_test_header_line(stats, nr_columns):
     header = ['timestamp']
     # first sample only
-    first_sample_key =  list(stats.keys())[0]
-    testnames = list(stats[first_sample_key].keys())
+    first_sample_key =  stats.keys()[0]
+    testnames = stats[first_sample_key].keys()
     for test in testnames:
         nr_childs = _find_total_leaf_nodes(stats[first_sample_key][test])
         header += _insert_centered_field(test, nr_childs)
