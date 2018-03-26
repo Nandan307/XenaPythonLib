@@ -47,6 +47,7 @@ class XenaSocket:
         self.bsocket.disconnect()
         self.access_semaphor.release()
 
+        
     def sendCommand(self, cmd):
         logger.debug("sendCommand(%s)", cmd)
         if not self.is_connected():
@@ -88,10 +89,13 @@ class XenaSocket:
                 msgnew = self.bsocket.readReply()
                 msg = msgleft + msgnew
 
+                
     def __sendQueryReply(self, cmd):
         self.access_semaphor.acquire()
         reply = self.bsocket.sendQuery(cmd).strip('\n')
-        self.access_semaphor.release()
+	self.access_semaphor.release()
+
+        
         return reply
 
     def sendQuery(self, cmd, multilines=False):
@@ -110,6 +114,8 @@ class XenaSocket:
 
         reply = self.__sendQueryReply(cmd)
         logger.debug("sendQuery(%s) reply(%s)", cmd, reply)
+
+
         return reply
 
     def sendQueryVerify(self, cmd):

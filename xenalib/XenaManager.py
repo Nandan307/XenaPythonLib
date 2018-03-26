@@ -10,6 +10,8 @@ import XenaPort
 logger = logging.getLogger(__name__)
 
 class XenaManager:
+
+
     def __init__(self, xsocket, owner, password = 'xena'):
         self.xsocket = xsocket
         self.ports = {}
