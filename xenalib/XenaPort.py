@@ -181,6 +181,8 @@ class XenaPort:
 
     def clear_all_tx_stats(self):
         self.pt_stats = {}
+        if not self.pt_stats:
+            self.grab_all_tx_stats()
         return self.__sendCommand('pt_clear')
 
     def dump_all_tx_stats(self):
