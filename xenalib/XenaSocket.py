@@ -108,17 +108,14 @@ class XenaSocket:
             logger.debug("sendQuery(%s) -- End", cmd)
             return replies
 
-        reply = self.__sendQueryReply(cmd)
+            reply = self.__sendQueryReply(cmd)
         logger.debug("sendQuery(%s) reply(%s)", cmd, reply)
         return reply
 
     def sendQueryVerify(self, cmd):
         logger.debug("sendQueryVerify(%s)", cmd)
-        if not self.is_connected():
-            logger.warning("sendQueryVerify on a disconnected socket")
-            return False
+        resp = self.sendQuery(cmd)
 
-        resp = self.__sendQueryReply(cmd)
         if resp == self.reply_ok:
             logger.debug("SendQueryVerify(%s) Succeed", cmd)
             return True
